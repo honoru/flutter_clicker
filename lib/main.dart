@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() => runApp(new MyApp());
 
@@ -21,11 +22,8 @@ class MyApp extends StatelessWidget {
                 color: Colors.lightBlue,
                 onPressed: () {
                   // Do something here
-                  Fluttertoast.showToast(
-                      msg: "짜잔!",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIos: 3);
+                  _incrementCounter();
+
                 },
               ),
             ],
@@ -33,5 +31,21 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  /**
+   *함수 증가 및 메시지 출력 함수
+   */
+  _incrementCounter() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    int counter = (prefs.getInt('counter') ?? 0) + 1;// 카운트 +1 증가
+
+    Fluttertoast.showToast(//메시지 출력
+        msg: 'Pressed $counter times.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        timeInSecForIos: 3);
+
+    await prefs.setInt('counter', counter);//카운트 입력
   }
 }
