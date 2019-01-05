@@ -1,13 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:audioplayers/audio_cache.dart';
+
 
 void main() => runApp(new MyApp());
 
+
 class MyApp extends StatelessWidget {
+
+  AudioCache player = new AudioCache();//오디오 플레이어 객채 만들고..
+
+
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
+
+
       title: 'Welcome to Flutter',
       home: new Scaffold(
         appBar: new AppBar(
@@ -31,6 +40,7 @@ class MyApp extends StatelessWidget {
         ),
       ),
     );
+
   }
 
   /**
@@ -45,6 +55,11 @@ class MyApp extends StatelessWidget {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         timeInSecForIos: 3);
+
+
+    const alarmAudioPath = "click1.mp3";
+    player.play(alarmAudioPath);//오디오 재생
+
 
     await prefs.setInt('counter', counter);//카운트 입력
   }
