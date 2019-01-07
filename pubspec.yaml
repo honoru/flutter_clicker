@@ -28,6 +28,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_launcher_icons: "^0.7.0"
+  volume: ^0.0.8
+
 
 flutter_icons:
   android: true
