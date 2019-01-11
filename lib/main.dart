@@ -49,49 +49,62 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Container(
-                margin: const EdgeInsets.only(top: 40.0),
-                child: Text(
-                  'Sound Control',
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    color: Colors.grey[500],
-                    fontSize: 32.0,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              (currentVol != null || maxVol != null)
-                  ? Slider(
-                      value: currentVol / 1.0,
-                      divisions: maxVol,
-                      max: maxVol / 1.0,
-                      min: 0,
-                      onChanged: (double d) {
-                        setVol(d.toInt());
-                        updateVolumes();
-                      },
-                    )
-                  : Container(),
-              Container(
-                margin: new EdgeInsets.fromLTRB(0.0, 40.0, 0.0, 10.0),
-                child: MaterialButton(
-                    minWidth: 160.0,
-                    height: 160.0,
-                    color: Colors.lightBlue,
-                    child: Text(
-                      "Click!",
-                      style: new TextStyle(
-                        fontSize: 20.0,
-                        color: Colors.white,
+                /* decoration: new BoxDecoration(
+                    border: new Border.\(color: Colors.black)),*/
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 10.0),
+                margin: const EdgeInsets.only(top: 10.0),
+                child: Column(
+                  children: <Widget>[
+                    Text(
+                      'Sound Control',
+                      textAlign: TextAlign.right,
+                      style: TextStyle(
+                        color: Colors.grey[500],
+                        fontSize: 32.0,
+                        fontWeight: FontWeight.bold,
                       ),
                     ),
-                    onPressed: () {
-                      // Do something here
-                      _incrementCounter();
-                    }),
+                    (currentVol != null || maxVol != null)
+                        ? Slider(
+                            value: currentVol / 1.0,
+                            divisions: maxVol,
+                            max: maxVol / 1.0,
+                            min: 0,
+                            onChanged: (double d) {
+                              setVol(d.toInt());
+                              updateVolumes();
+                            },
+                          )
+                        : Container(),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.fromLTRB(50.0, 80.0, 50.0, 80.0),
+                  color: Colors.red,
+                  //margin: const EdgeInsets.fromLTRB(0, 50.0, 0, 50.0),
+                  child: new SizedBox(
+                    width: 30.0,
+                    height: 10.0,
+                    child: new MaterialButton(
+                        color: Colors.lightBlue,
+                        child: Text(
+                          "Click!",
+                          style: TextStyle(
+                            fontSize: 20.0,
+                            color: Colors.white,
+                          ),
+                        ),
+                        onPressed: () {
+                          // Do something here
+                          _incrementCounter();
+                        }),
+                  ),
+                ),
               ),
             ],
           ),
