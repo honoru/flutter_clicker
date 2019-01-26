@@ -1,135 +1,45 @@
+import 'package:clicker/ClickPage.dart';
+import 'package:clicker/onBoarding.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:audioplayers/audio_cache.dart';
-import 'package:volume/volume.dart';
 
-void main() => runApp(new MyApp());
+bool _isFirst = true;
 
-class MyApp extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
+void main() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  bool isFirst = prefs.getBool('isFirst') ?? true;
+  _isFirst = isFirst; //최초실행 확인
+
+  runApp(MainPage());
 }
 
-class _MyAppState extends State<MyApp> {
-  AudioCache player = new AudioCache(); //오디오 플레이어 객채 만들고..
-  AudioManager audioManager;
-  int maxVol, currentVol; //음량
-
-  @override
-  void initState() {
-    super.initState();
-    audioManager = AudioManager.STREAM_MUSIC; //미디어 음량으로
-    initPlatformState();
-    updateVolumes();
-  }
-
-  Future<void> initPlatformState() async {
-    await Volume.controlVolume(AudioManager.STREAM_MUSIC);
-  }
-
-  updateVolumes() async {
-    // get Max Volume
-    maxVol = await Volume.getMaxVol;
-    // get Current Volume
-    currentVol = await Volume.getVol;
-    setState(() {});
-  }
-
-  setVol(int i) async {
-    await Volume.setVol(i);
-  }
-
+class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    var activity;
+    if (_isFirst) {
+      activity = onBoarding(title: '클리커 튜토리얼');
+      setFirst();
+    } else {
+      //최초실행
+      activity = ClickApp();
+    }
+
     return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Clicker-Flutter'),
-        ),
-        body: Center(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Container(
-                /* decoration: new BoxDecoration(
-                    border: new Border.\(color: Colors.black)),*/
-                padding: const EdgeInsets.fromLTRB(0, 0, 0, 10.0),
-                margin: const EdgeInsets.only(top: 10.0),
-                child: Column(
-                  children: <Widget>[
-                    Text(
-                      'Sound Control',
-                      textAlign: TextAlign.right,
-                      style: TextStyle(
-                        color: Colors.grey[500],
-                        fontSize: 32.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    (currentVol != null || maxVol != null)
-                        ? Slider(
-                            value: currentVol / 1.0,
-                            divisions: maxVol,
-                            max: maxVol / 1.0,
-                            min: 0,
-                            onChanged: (double d) {
-                              setVol(d.toInt());
-                              updateVolumes();
-                            },
-                          )
-                        : Container(),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  margin: const EdgeInsets.fromLTRB(50.0, 80.0, 50.0, 80.0),
-                  color: Colors.red,
-                  //margin: const EdgeInsets.fromLTRB(0, 50.0, 0, 50.0),
-                  child: new SizedBox(
-                    width: 30.0,
-                    height: 10.0,
-                    child: new MaterialButton(
-                        color: Colors.lightBlue,
-                        child: Text(
-                          "Click!",
-                          style: TextStyle(
-                            fontSize: 20.0,
-                            color: Colors.white,
-                          ),
-                        ),
-                        onPressed: () {
-                          // Do something here
-                          _incrementCounter();
-                        }),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
+      //debugShowCheckedModeBanner: false,
+      initialRoute: '/',
+      title: '클리커',
+      theme: ThemeData(primarySwatch: Colors.teal, fontFamily: 'Nunito'),
+      routes: {'/ClickPage': (context) => ClickApp()},
+      home: activity,
     );
   }
 
   /**
-   *함수 증가 및 메시지 출력 함수
+   * 최초실행 체크
    */
-  _incrementCounter() async {
+  setFirst() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    int counter = (prefs.getInt('counter') ?? 0) + 1; // 카운트 +1 증가
-
-    Fluttertoast.showToast(
-        //메시지 출력
-        msg: 'Pressed $counter times.',
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIos: 3);
-
-    const alarmAudioPath = "click1.mp3";
-    player.play(alarmAudioPath); //오디오 재생
-
-    await prefs.setInt('counter', counter); //카운트 입력
+    await prefs.setBool('isFirst', false);
   }
 }
